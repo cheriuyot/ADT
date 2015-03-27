@@ -525,6 +525,11 @@
 			else if(quantity_entered=="" || quantity_entered==0){
 				bootbox.alert("<h4>Quantity Alert</h4>\n\<hr/><center>Please Specify the Quantity of the Drug</center>");
 			}
+			else if(parseInt(quantity_entered)< 0 ){
+				bootbox.alert("<h4>Quantity Alert</h4>\n\<hr/><center>No Negative Values Allowed in this field</center>");
+				quantity_entered.val("");
+				quantity_entered.focus();
+			}
 			else{
 				var cloned_object = $('#drugs_table tr:last').clone(true);
 				var drug_row = cloned_object.attr("drug_row");

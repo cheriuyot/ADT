@@ -586,6 +586,7 @@ class Inventory_Management extends MY_Controller {
 		/*
 		 * Get posted data from the client
 		 */
+		
 		$balance = "";
 		$facility = $this -> session -> userdata("facility");
 		$facility_detail = facilities::getSupplier($facility);
@@ -626,7 +627,6 @@ class Inventory_Management extends MY_Controller {
 		$source_dest_type = '';
 		$running_balance = 0;
 		$other_running_balance = 0; //For other store
-		
 		
 		// If email is not empty
 		if($email !=""){

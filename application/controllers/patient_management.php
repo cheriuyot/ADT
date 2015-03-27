@@ -347,7 +347,7 @@ class Patient_Management extends MY_Controller {
 		        ORDER BY  pv.patient_visit_id DESC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-        if ($results) {
+		if ($results) {
 			$data['history_logs'] = $results;
 		} else {
 			$data['history_logs'] = "";
@@ -1647,7 +1647,7 @@ class Patient_Management extends MY_Controller {
 
         $query = $this -> db -> query($sql);
 		$visits = $query ->result_array();
-        $temp = array();
+		$temp = array();
 
         foreach($visits as $counter => $visit)
         {  

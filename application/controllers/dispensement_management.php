@@ -631,7 +631,7 @@ class Dispensement_Management extends MY_Controller {
 	               //count no. to print
 	               $count=1;
 				   
-	               while($count<=$no_to_print[$counter]){
+	                while($count<=$no_to_print[$counter]){
 	               	     $this -> mpdf -> addPage();
 	               	     $str='<table border="1"  style="border-collapse:collapse;font-size:11px;">';
 						 $str.='<tr>';
@@ -643,18 +643,20 @@ class Dispensement_Management extends MY_Controller {
 						 $str.='<b>'.$dose_value[$counter].'</b> to be taken <b>'.$dose_frequency[$counter].'</b> times a day after every <b>'.$dose_hours[$counter].'</b> hours</td>';
 						 $str.='</tr>';
 						 $str.='<tr>';
-						 $str.='<td colspan="3">Before/After Meals: ';
+						 $str.='<td colspan="3" style="text-align:left;">Before/After Meals: ';
 						 $str.='<b>'.$drug_instructions[$counter].'</b></td>';
 						 $str.='</tr>';
 						 $str.='<tr>';
-						 $str.='<td>Patient Name: <b>'.$patient_name.'</b> </td><td> Pharmacy :<b>'.$pharmacy_name[$counter].'</b> </td> <td>Date:<b>'.$dispensing_date.'</b></td>';
+						 //$str.='<td>Name: <b>'.$patient_name.'</b> </td><td> Pharmacy :<b>'.$pharmacy_name[$counter].'</b> </td> <td>Date:<b>'.$dispensing_date.'</b></td>';
+						 $str.='<td>'.$patient_name.'</td><td><b>'.$pharmacy_name[$counter].'</b> </td> <td><b>'.$dispensing_date.'</b></td>';
 						 $str.='</tr>';
 						 $str.='<tr>';
-						 $str.='<td colspan="3" style="text-align:center;">Keep all medicines in a cold dry place out of reach of children.</td></tr>';
-						 $str.='<tr><td colspan="2">Facility Name: <b>'.$this->session->userdata("facility_name").'</b></td><td> Facility Phone: <b>'.$this->session->userdata("facility_phone").'</b>';
+						// $str.='<td colspan="3" style="text-align:center;">Keep all medicines in a cold dry place out of reach of children.</td></tr>';
+						 $str.='<td colspan="3" style="text-align:left;">Store in a cool dry place out of reach of children.</td></tr>';
+						 $str.='<tr><td colspan="2">'.$this->session->userdata("facility_name").'</td><td>Facility Phone: <b>'.$this->session->userdata("facility_phone").'</b>';
 						 $str.='</td>';
 						 $str.='</tr>';
-						 $str.='</table>';
+						 $str.='</table>';	
 						 //write to page
 						 $this -> mpdf -> WriteHTML($str);
 						 $count++;
