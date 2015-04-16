@@ -1,7 +1,6 @@
 <?php
 class Order extends MY_Controller {
-	//var $esm_url = "http://api.kenyapharma.org/demo/"; // directs to kenya pharma demo site
-	var $esm_url = "http://api.kenyapharma.org/"; // directs to the kenya pharma site
+	var $esm_url = "http://api.kenyapharma.org/";
 	var $nascop_url = "";
 	function __construct() {
 		parent::__construct();
@@ -244,8 +243,7 @@ class Order extends MY_Controller {
 						$links[] = "sync/facility/" . $facility_id . "/cdrr/" . $two_current_month_start;
 						$links[] = "sync/facility/" . $facility_id . "/maps/" . $two_current_month_start;
 					}
-
-					}
+			    }
 			}
 		}
 
@@ -262,11 +260,10 @@ class Order extends MY_Controller {
 				echo "Error: " . $curl -> error_code . "<br/>";
 			} else {
 				$main_array = json_decode($curl -> response, TRUE);
-				//echo "<pre>";print_r($main_array);
+//                                echo "<pre>";  print_r($main_array);
 				$clean_data = array();
 
 				foreach ($main_array as $main) {
-
 					if ($main['code'] == "D-CDRR" || $main['code'] == "F-CDRR_units" || $main['code'] == "F-CDRR_packs") {
 						$type = "cdrr";
 					} else {
@@ -358,6 +355,7 @@ class Order extends MY_Controller {
 		$conditions = "";
 
 		$user_facilities = User_Facilities::getHydratedFacilityList($this -> session -> userdata("api_id"));
+
 		$facilities = json_decode($user_facilities['facility'], TRUE);
 		$facilities = implode(",", $facilities);
 
@@ -396,30 +394,13 @@ class Order extends MY_Controller {
 			$columns = array('#', 'Facility Name', 'Period Beginning', 'Options');
 
 			if ($facility_type > 1  && $supplier == "KEMSA") {
-				//original code
-				/*
-				$sql = "SELECT c.period_begin as id,sf.name as facility_name,c.period_begin,c.id as cdrr_id,m.id as maps_id,c.facility_id as facility_id,f.facilitycode as facility_code
+				 $sql = "SELECT c.period_begin as id,sf.name as facility_name,c.period_begin,c.id as cdrr_id,m.id as maps_id,c.facility_id as facility_id,f.facilitycode as facility_code
 						FROM cdrr c 
 						LEFT JOIN maps m ON (c.facility_id=m.facility_id) AND (c.period_begin=m.period_begin) AND (c.period_end=m.period_end)
 						LEFT JOIN sync_facility sf ON sf.id=c.facility_id 
 						LEFT JOIN facilities f ON f.facilitycode=sf.code
 						WHERE c.code = 'D-CDRR' 
 						AND m.code='D-MAPS'
-						AND LCASE(c.status) NOT IN('prepared','review','deleted')
-						AND LCASE(m.status) NOT IN('prepared','review','deleted')
-						AND c.facility_id IN($facilities)
-						GROUP BY c.period_begin
-	                    ORDER BY c.period_begin desc";
-				*/
-				$sql = "SELECT c.period_begin as id,sf.name as facility_name,c.period_begin,c.id as cdrr_id,
-						m.id as maps_id,c.facility_id as facility_id,f.facilitycode as facility_code
-						FROM cdrr c 
-						LEFT JOIN maps m ON (c.facility_id=m.facility_id) AND (c.period_begin=m.period_begin)
-						 AND (c.period_end=m.period_end)
-						LEFT JOIN sync_facility sf ON sf.id=c.facility_id 
-						LEFT JOIN facilities f ON f.facilitycode=sf.code
-						WHERE (c.code = 'F-CDRR_units' || c.code = 'D-CDRR' )
-						AND (m.code='F-MAPS' || m.code = 'D-MAPS')
 						AND LCASE(c.status) NOT IN('prepared','review','deleted')
 						AND LCASE(m.status) NOT IN('prepared','review','deleted')
 						AND c.facility_id IN($facilities)
@@ -432,7 +413,6 @@ class Order extends MY_Controller {
 			$results = $query -> result_array();
 		} else {
 			$results = array();
-
 		}
 
 		if ($period_begin != "") {
@@ -767,7 +747,6 @@ class Order extends MY_Controller {
 				$quantities_dispensed = $this -> input -> post('quantity_dispensed');
 				if ($code == "F-CDRR_packs") {
 					$quantities_dispensed_packs = $this -> input -> post('quantity_dispensed_packs');
-					//echo "<pre>";print_r(expression)
 				}
 				$losses = $this -> input -> post('losses');
 				$adjustments = $this -> input -> post('adjustments');
@@ -2625,6 +2604,7 @@ class Order extends MY_Controller {
 				ORDER BY dsb.expiry_date) as exp ON phy.id=exp.id";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
+
 		if ((int)@$results[0]['stocks_qty'] > 0) {
 			$row["early_expiry"] = date('d-M-Y', strtotime($results[0]['early_expiry']));
 		} else {
@@ -3798,7 +3778,6 @@ class Order extends MY_Controller {
 							    GROUP BY ci.drug_id";
 						$query = $this -> db -> query($sql);
 						$results = $query -> result_array();
-
 					}
 					if ($results) {
 						$reported_consumed += @$results[0]['consumed'];
@@ -3825,7 +3804,7 @@ class Order extends MY_Controller {
 				$results = $query -> result_array();
 				$row['dispensed_to_patients'] = 0;
 				if ($results) {
-					if($results[0]['total'] !=null){
+                    if($results[0]['total'] !=null){
                     	$row['dispensed_to_patients']=$results[0]['total'];
                     }
 				}
@@ -3843,13 +3822,13 @@ class Order extends MY_Controller {
 			}
 			//Get Physical Count
 			$row['physical_stock'] = $row['beginning_balance'] + $row['received_from'] - $row['dispensed_to_patients'] - $row['losses'] + $row['adjustments'];
-		   	//Get Resupply
+		    //Get Resupply
 		    $row['resupply'] = ($row['reported_consumed'] * 3) - $row['physical_stock'];
 		}
 		else
-		{	
+		{
 			$row['physical_stock'] = $row['beginning_balance'] + $row['received_from'] - $row['dispensed_to_patients'] - $row['losses'] + $row['adjustments'];
-        	$row['resupply'] = ($row['dispensed_to_patients'] * 3) - $row['physical_stock'];
+                        $row['resupply'] = ($row['dispensed_to_patients'] * 3) - $row['physical_stock'];
         }
 
         if($code == "F-CDRR_packs"){
@@ -3862,8 +3841,8 @@ class Order extends MY_Controller {
 			if($row['dispensed_to_patients'] >0){
 			   $row['dispensed_packs']=round(@$row['dispensed_to_patients'] / @$pack_size);
 			}
-			$row['physical_stock'] = $row['beginning_balance'] + $row['received_from'] - $row['dispensed_packs'] - $row['losses'] + $row['adjustments'];
-        	$row['resupply'] = ($row['dispensed_packs'] * 3) - $row['physical_stock'];
+                        $row['physical_stock'] = $row['beginning_balance'] + $row['received_from'] - $row['dispensed_packs'] - $row['losses'] + $row['adjustments'];
+                        $row['resupply'] = ($row['dispensed_packs'] * 3) - $row['physical_stock'];
 		}
 
 		echo json_encode($row);
@@ -3873,17 +3852,20 @@ class Order extends MY_Controller {
 		$balance=0;
 		//we are checking for the physical count of theis drug month before reporting period
 		$param['period_begin']=date('Y-m-d',strtotime($param['period_begin']."-1 month"));
-		$balance=Cdrr_Item::getLastPhysicalStock($param['period_begin'], $param['drug_id'], $param['facility_id']);
+               // print_r($param);
+                $balance=Cdrr_Item::getLastPhysicalStock($param['period_begin'], $param['drug_id'], $param['facility_id']);
 		if(!$balance && $month<3){
 			$month++;
 			$param['period_begin']=date('Y-m-d',strtotime($param['period_begin']."-1 month"));
+                        //print_r($param);die;
 			$balance=$this->getBeginningBalance($param,$month);
+                        
+                        
 		}
 
 		if($balance==null){
 			$balance=0;
 		}
-		//print_r($balance);die;
 		return $balance;
 	}
 
